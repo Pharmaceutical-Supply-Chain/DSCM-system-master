@@ -18,7 +18,7 @@ use App\Http\Controllers\DashboardControllers\StockDetailsController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
+Route::get('/users/sh/wholesaler', [UserController::class, 'showWholesaler']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -76,11 +76,11 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
 
     // Home Controller
     Route::get('/clients', [HomeController::class, 'displayClients']);
-    Route::get('/monitoring', [HomeController::class, 'drugShortageAlert']); 
+    Route::get('/monitoring', [HomeController::class, 'drugShortageAlert']);
     Route::get('/sellers', [HomeController::class, 'sellers']);
-    Route::get('/search/{name}', [HomeController::class, 'search']); 
+    Route::get('/search/{name}', [HomeController::class, 'search']);
     // Route::get('/autocomplete', [HomeController::class, 'autocomplete']);
-    
+
     // Role Controller
     Route::resource('role', RoleController::class);
 });

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     use HttpResponses;
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -22,14 +22,14 @@ class UserController extends Controller
     public function index()
     {
         $role = Role::where('descrition', 'Admin')->firstOrFail();
-        
+
         if (Auth::user()->role_id === $role->id)
         {
             return UserResource::collection(
                 User::all()
             );
         }
-        
+
         return $this->error('', 'You are not authorized to make this request', 403);
     }
 
@@ -42,13 +42,13 @@ class UserController extends Controller
     public function show(User $user)
     {
         $role = Role::where('descrition', 'Admin')->firstOrFail();
-        
+
         if (Auth::user()->id === $user->id || Auth::user()->role_id === $role->id)
         {
             return new UserResource ($user);
         }
 
-        return $this->error('', 'You are not authorized to make this request', 403);        
+        return $this->error('', 'You are not authorized to make this request', 403);
     }
 
     /**
@@ -79,24 +79,24 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $role = Role::where('descrition', 'Admin')->firstOrFail();
-        
+
         if (Auth::user()->id === $user->id || Auth::user()->role_id === $role->id)
         {
             $user->delete();
             $user->tokens()->delete();
-            
+
             return $this->success([
                 'message' => 'User Successfully Deleted'
             ]);
         }
 
-        return $this->error('', 'You are not authorized to make this request', 403); 
+        return $this->error('', 'You are not authorized to make this request', 403);
     }
 
     public function getWholesalers ()
     {
         $role = Role::where('descrition', 'Wholesaler')->firstOrFail();
-        
+
         return UserResource::collection(
             User::where('role_id', $role->id)->get()
         );
@@ -105,7 +105,7 @@ class UserController extends Controller
     public function getRetailers ()
     {
         $role = Role::where('descrition', 'retailer')->firstOrFail();
-        
+
         return UserResource::collection(
             User::where('role_id', $role->id)->get()
         );
@@ -114,9 +114,29 @@ class UserController extends Controller
     public function getEmployees ()
     {
         $role = Role::where('descrition', 'Employee')->firstOrFail();
-        
+
         return UserResource::collection(
             User::where('role_id', $role->id)->get()
         );
     }
+
+    public function showWholesaler ()
+                {
+
+                    $user =User::where('role_id',2)->get();
+
+                        if($user->isNotEmpty())
+                        {
+                        return UserResource::collection(
+                                 $user
+                                );
+                        }
+                        else
+                        {
+                            return response()->json([
+                                    'status' => 2,
+                                    'message' => "لايوجد تُجار جُملة حتئ الان",
+                                ], 200);
+                            }
+                        }
 }
