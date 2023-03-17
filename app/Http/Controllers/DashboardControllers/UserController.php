@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\WholesalerResource;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -23,8 +24,7 @@ class UserController extends Controller
     {
         $role = Role::where('descrition', 'Admin')->firstOrFail();
 
-        if (Auth::user()->role_id === $role->id)
-        {
+        if (Auth::user()->role_id === $role->id) {
             return UserResource::collection(
                 User::all()
             );
@@ -43,9 +43,8 @@ class UserController extends Controller
     {
         $role = Role::where('descrition', 'Admin')->firstOrFail();
 
-        if (Auth::user()->id === $user->id || Auth::user()->role_id === $role->id)
-        {
-            return new UserResource ($user);
+        if (Auth::user()->id === $user->id || Auth::user()->role_id === $role->id) {
+            return new UserResource($user);
         }
 
         return $this->error('', 'You are not authorized to make this request', 403);
@@ -60,11 +59,10 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        if (Auth::user()->id === $user->id)
-        {
+        if (Auth::user()->id === $user->id) {
             $user->update($request->all());
 
-            return new UserResource ($user);
+            return new UserResource($user);
         }
 
         return $this->error('', 'You are not authorized to make this request', 403);
@@ -80,8 +78,7 @@ class UserController extends Controller
     {
         $role = Role::where('descrition', 'Admin')->firstOrFail();
 
-        if (Auth::user()->id === $user->id || Auth::user()->role_id === $role->id)
-        {
+        if (Auth::user()->id === $user->id || Auth::user()->role_id === $role->id) {
             $user->delete();
             $user->tokens()->delete();
 
@@ -93,7 +90,7 @@ class UserController extends Controller
         return $this->error('', 'You are not authorized to make this request', 403);
     }
 
-    public function getWholesalers ()
+    public function getWholesalers()
     {
         $role = Role::where('descrition', 'Wholesaler')->firstOrFail();
 
@@ -102,7 +99,7 @@ class UserController extends Controller
         );
     }
 
-    public function getRetailers ()
+    public function getRetailers()
     {
         $role = Role::where('descrition', 'retailer')->firstOrFail();
 
@@ -111,7 +108,7 @@ class UserController extends Controller
         );
     }
 
-    public function getEmployees ()
+    public function getEmployees()
     {
         $role = Role::where('descrition', 'Employee')->firstOrFail();
 
@@ -120,23 +117,17 @@ class UserController extends Controller
         );
     }
 
-    public function showWholesaler ()
-                {
+    public function showWholesaler()
+    {
+        $users = User::where('role_id', 2)->get();
 
-                    $user =User::where('role_id',2)->get();
-
-                        if($user->isNotEmpty())
-                        {
-                        return UserResource::collection(
-                                 $user
-                                );
-                        }
-                        else
-                        {
-                            return response()->json([
-                                    'status' => 2,
-                                    'message' => "لايوجد تُجار جُملة حتئ الان",
-                                ], 200);
-                            }
-                        }
+        if ($users->isNotEmpty()) {
+            return WholesalerResource::collection($users);
+        } else {
+            return response()->json([
+                'status' => 2,
+                'message' => "لايوجد تُجار جُملة حتئ الان",
+            ], 200);
+        }
+    }
 }
