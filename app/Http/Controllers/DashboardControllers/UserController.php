@@ -121,7 +121,7 @@ class UserController extends Controller
     {
         $users = User::where('role_id', 2)->get();
 
-        if ($users->isNotEmpty()) {
+        if ($users->count() > 0) {
             return WholesalerResource::collection($users);
         } else {
             return response()->json([
